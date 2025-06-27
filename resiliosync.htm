@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BDIX P2P File Sharing Interactive Report</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --fg: #333;
+      --header-bg: #0073e6;
+      --header-fg: #fff;
+      --card-bg: #fff;
+      --card-border: #ccc;
+      --btn-bg: #0073e6;
+      --btn-fg: #fff;
+    }
+    [data-theme="dark"] {
+      --bg: #222;
+      --fg: #ddd;
+      --header-bg: #005bb5;
+      --header-fg: #fff;
+      --card-bg: #333;
+      --card-border: #555;
+      --btn-bg: #005bb5;
+      --btn-fg: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: sans-serif;
+      background: var(--bg); color: var(--fg);
+    }
+    header {
+      background: var(--header-bg); color: var(--header-fg);
+      padding: 1rem; text-align: center;
+    }
+    .controls {
+      display: flex; gap: 1rem; justify-content: center;
+      margin: 1rem;
+    }
+    .controls input, .controls button {
+      padding: 0.5rem; font-size: 1rem;
+    }
+    .controls input {
+      flex: 1;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--fg);
+    }
+    .controls button {
+      border: none;
+      background: var(--btn-bg); color: var(--btn-fg);
+      border-radius: 4px; cursor: pointer;
+    }
+    .container {
+      max-width: 800px; margin: auto; padding: 1rem;
+    }
+    .method {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px; margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    .method h2 {
+      margin: 0 0 0.5rem;
+    }
+    .method p { margin: 0.5rem 0; }
+    .method .btn-toggle {
+      background: none; border: none; color: var(--btn-bg);
+      cursor: pointer; font-size: 0.9rem; text-decoration: underline;
+    }
+    .details {
+      display: none; margin-top: 0.5rem;
+      padding-left: 1rem; border-left: 2px solid var(--card-border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BDIX P2P File Sharing Methods</h1>
+  </header>
+
+  <div class="controls">
+    <input id="search" type="text" placeholder="Search methods…">
+    <button id="theme-toggle">Toggle Dark Mode</button>
+  </div>
+
+  <div class="container" id="methods">
+    <!-- Method Template -->
+    <div class="method" data-name="Resilio Sync">
+      <h2>Resilio Sync</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>Encrypted P2P via BitTorrent protocol.</li>
+          <li>Install on both PCs, add folder → Share → Generate link → Paste on peer.</li>
+          <li>Open a fixed port (e.g. 55555 TCP/UDP) via UPnP or manual forwarding.</li>
+          <li><strong>BDIX tip:</strong> Manually add peer’s BDIX IP (e.g. <code>tcp://10.x.x.x:55555</code>).</li>
+          <li><strong>Speed:</strong> Up to full ISP bandwidth (e.g. 90–95 Mbps on a 100 Mbps plan).</li>
+          <li><strong>Pros:</strong> Simple GUI, cross‑platform, encrypted, direct P2P.</li>
+          <li><strong>Cons:</strong> If NAT fails, falls back to Resilio relays (non‑BDIX).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="method" data-name="Syncthing">
+      <h2>Syncthing</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>Open‑source folder sync with web GUI (http://localhost:8384).</li>
+          <li>Add each other’s Device IDs, then share folders in GUI.</li>
+          <li>Forward TCP/UDP port 22000; optionally specify BDIX IP in “Addresses”.</li>
+          <li><strong>Speed:</strong> Full BDIX link (e.g. multi‑MB/s on 100 Mbps).</li>
+          <li><strong>Pros:</strong> Private, no cloud, conflict handling, encrypted.</li>
+          <li><strong>Cons:</strong> Requires config; if misconfigured, uses public relays.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="method" data-name="BitTorrent">
+      <h2>BitTorrent</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>Create a private .torrent (or magnet) with no external tracker.</li>
+          <li>Seed on A, download on B; exchange the .torrent file or magnet link.</li>
+          <li>Forward your client’s listening port (e.g. 6881 TCP/UDP).</li>
+          <li><strong>BDIX tip:</strong> Disable DHT/public trackers, or run a local opentracker.</li>
+          <li><strong>Speed:</strong> Saturates your line (e.g. 90–95 Mbps on 100 Mbps plan).</li>
+          <li><strong>Pros:</strong> Robust, resumable, widespread clients.</li>
+          <li><strong>Cons:</strong> IP/port exposure; NAT config needed; may leak off‑BDIX if DHT on.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="method" data-name="Python HTTP Server">
+      <h2>Python HTTP Server</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>Run <code>python3 -m http.server 8000</code> in the folder.</li>
+          <li>On peer, visit <code>http://&lt;A’s_BDIX_IP&gt;:8000</code> to download files.</li>
+          <li>Forward TCP port 8000 on your router; open firewall.</li>
+          <li><strong>Pros:</strong> No install on many systems; super‑quick setup.</li>
+          <li><strong>Cons:</strong> No resume; no encryption (HTTP only).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="method" data-name="FTP Server">
+      <h2>FTP Server</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>Install FileZilla Server (Win) or vsftpd (Linux).</li>
+          <li>Configure user + folder; forward port 21 + passive range (e.g. 50000–50010).</li>
+          <li>Connect via any FTP client (FileZilla, browser).</li>
+          <li><strong>Pros:</strong> Resume support; parallel transfers.</li>
+          <li><strong>Cons:</strong> No encryption by default (use FTPS/TLS if needed).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="method" data-name="iperf3 Speed Test">
+      <h2>iperf3 Speed Test</h2>
+      <button class="btn-toggle">Show Details</button>
+      <div class="details">
+        <ul>
+          <li>On A: <code>iperf3 -s</code></li>
+          <li>On B: <code>iperf3 -c &lt;A’s_BDIX_IP&gt; -P 4</code> (4 parallel streams)</li>
+          <li>Result shows raw TCP throughput over BDIX (e.g. 800 Mbps on gigabit links).</li>
+          <li><strong>Tip:</strong> Close other network apps; repeat at different times to gauge load.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      document.documentElement.toggleAttribute('data-theme');
+    });
+
+    // Collapsible details
+    document.querySelectorAll('.btn-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const details = btn.nextElementSibling;
+        const showing = details.style.display === 'block';
+        details.style.display = showing ? 'none' : 'block';
+        btn.textContent = showing ? 'Show Details' : 'Hide Details';
+      });
+    });
+
+    // Search filter
+    document.getElementById('search').addEventListener('input', e => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.method').forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        card.style.display = name.includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

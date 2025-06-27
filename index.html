@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P File Sharing over BDIX in Bangladesh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        .font-serif { font-family: 'Crimson Text', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        
+        :root {
+            --deep-navy: #1e3a8a;
+            --soft-grey: #f8fafc;
+            --accent-blue: #3b82f6;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+        
+        .bg-deep-navy { background-color: var(--deep-navy); }
+        .bg-soft-grey { background-color: var(--soft-grey); }
+        .text-deep-navy { color: var(--deep-navy); }
+        .text-text-primary { color: var(--text-primary); }
+        .text-text-secondary { color: var(--text-secondary); }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            z-index: 50;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .bento-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .citation-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px dotted var(--accent-blue);
+        }
+        
+        .citation-link:hover {
+            border-bottom-style: solid;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .challenge-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mermaid-wrapper {
+            width: 100%;
+            height: 500px;
+            overflow: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mermaid {
+            min-width: 800px;
+            min-height: 400px;
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mermaid:active {
+            cursor: grabbing;
+        }
+        
+        .mermaid svg {
+            max-width: none !important;
+            height: auto !important;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mermaid-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        
+        .mermaid-btn {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mermaid-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .mermaid-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 1024px) {
+            .toc-fixed {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .toc-fixed.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-soft-grey font-sans">
+    <!-- Fixed Table of Contents -->
+    <nav class="toc-fixed" id="toc">
+        <div class="mb-8">
+            <h3 class="font-serif font-semibold text-lg text-deep-navy mb-4">Contents</h3>
+            <ul class="space-y-3 text-sm">
+                <li><a href="#hero" class="text-text-secondary hover:text-deep-navy transition-colors">Executive Summary</a></li>
+                <li><a href="#methods" class="text-text-secondary hover:text-deep-navy transition-colors">P2P Methods Overview</a></li>
+                <li><a href="#resilio" class="text-text-secondary hover:text-deep-navy transition-colors">Resilio Sync</a></li>
+                <li><a href="#syncthing" class="text-text-secondary hover:text-deep-navy transition-colors">Syncthing</a></li>
+                <li><a href="#torrent" class="text-text-secondary hover:text-deep-navy transition-colors">BitTorrent</a></li>
+                <li><a href="#http-ftp" class="text-text-secondary hover:text-deep-navy transition-colors">HTTP/FTP Servers</a></li>
+                <li><a href="#bdix-benefits" class="text-text-secondary hover:text-deep-navy transition-colors">BDIX Benefits</a></li>
+                <li><a href="#speed-expectations" class="text-text-secondary hover:text-deep-navy transition-colors">Speed Expectations</a></li>
+                <li><a href="#summary" class="text-text-secondary hover:text-deep-navy transition-colors">Summary of Pros & Cons</a></li>
+            </ul>
+        </div>
+        
+        <div class="border-t pt-6">
+            <h4 class="font-medium text-deep-navy mb-3">Key Insights</h4>
+            <div class="space-y-2 text-xs text-text-secondary">
+                <div class="bg-blue-50 p-2 rounded">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-1"></i>
+                    BDIX can be 5-10× faster than international transfers
+                </div>
+                <div class="bg-green-50 p-2 rounded">
+                    <i class="fas fa-key text-green-500 mr-1"></i>
+                    Requires proper NAT/port forwarding configuration
+                </div>
+                <div class="bg-purple-50 p-2 rounded">
+                    <i class="fas fa-cogs text-purple-500 mr-1"></i>
+                    Best performance with public IPs and BDIX-enabled ISPs
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile TOC Toggle -->
+    <button class="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-lg" onclick="toggleMobileTOC()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-8 lg:p-12">
+            <div class="max-w-6xl mx-auto">
+                <div class="hero-grid">
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <h1 class="font-serif text-5xl lg:text-6xl font-semibold text-deep-navy leading-tight">
+                                <em class="italic">P2P File Sharing</em><br/>
+                                over BDIX in Bangladesh
+                            </h1>
+                            <p class="text-xl text-text-secondary max-w-2xl leading-relaxed">
+                                Discover how to efficiently share large files locally within Bangladesh using BDIX-enabled ISPs for faster, more reliable transfers.
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-center space-x-6 text-sm text-text-secondary">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock"></i>
+                                <span>Technical Guide</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-code"></i>
+                                <span>Implementation Steps</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bento-card">
+                            <img src="https://my.gotmyhost.com/knowledgebase/114/Benefits-of-BDIX-VPS-and-differences-compared-to-VPS-services-in-the-USA-Singapore-SG-or-Germany-GR..html" alt="BDIX Network Diagram" class="w-full h-48 object-cover rounded-lg mb-4" referrerpolicy="no-referrer" data-modified="1" data-score="11596.00"/>
+                            <h3 class="font-serif font-semibold text-lg mb-2">What is BDIX?</h3>
+                            <p class="text-sm text-text-secondary">Bangladesh Domestic Internet eXchange Point enables local traffic routing between ISPs, significantly reducing latency and increasing transfer speeds for local file sharing.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Key Highlights Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <div class="bento-card text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tachometer-alt text-blue-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Speed Benefits</h4>
+                        <p class="text-sm text-text-secondary">BDIX transfers are 5-10× faster than international links, with 100MB files transferring in ~2 minutes instead of 15 minutes</p>
+                    </div>
+                    
+                    <div class="bento-card text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Cost Efficiency</h4>
+                        <p class="text-sm text-text-secondary">Reduces international bandwidth usage costs for ISPs and end-users</p>
+                    </div>
+                    
+                    <div class="bento-card text-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-plug text-purple-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Reliability</h4>
+                        <p class="text-sm text-text-secondary">Less susceptible to international network congestion and outages</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methods Section -->
+        <section id="methods" class="py-16 px-8 lg:px-12 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">P2P File Sharing Methods</h2>
+                
+                <div class="highlight-box">
+                    <h3 class="font-serif text-2xl font-semibold mb-4">Overview</h3>
+                    <p class="text-lg leading-relaxed">
+                        Several peer-to-peer methods work exceptionally well over BDIX in Bangladesh. These methods leverage BDIX's local routing to achieve faster transfer speeds compared to global internet transfers. Each method has unique setup requirements and characteristics.
+                    </p>
+                </div>
+
+                <div class="space-y-8 mt-8">
+                    <h3 class="font-serif text-2xl font-semibold mb-4">Key Considerations for All Methods</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bento-card">
+                            <h4 class="font-semibold mb-3">Network Requirements</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-wifi text-blue-500"></i>
+                                    <span>BDIX-enabled ISP connection</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-server text-blue-500"></i>
+                                    <span>Public IP address or port forwarding</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-link text-blue-500"></i>
+                                    <span>NAT configuration (preferably with UPnP)</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                    <span>BDIX peering enabled on both ends</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bento-card">
+                            <h4 class="font-semibold mb-3">General Benefits</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-bolt text-green-500"></i>
+                                    <span>Speeds up to your local ISP bandwidth limit</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-shield-alt text-green-500"></i>
+                                    <span>Reduced exposure to external network threats</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-money-bill-wave text-green-500"></i>
+                                    <span>Cost savings on international bandwidth</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-chart-line text-green-500"></i>
+                                    <span>More stable transfer rates</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resilio Sync Section -->
+        <section id="resilio" class="py-16 px-8 lg:px-12 bg-soft-grey">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">Resilio Sync</h2>
+                
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Overview</h3>
+                        <p class="leading-relaxed mb-6">
+                            Resilio Sync (formerly BitTorrent Sync) is a user-friendly application that enables encrypted, peer-to-peer file synchronization across devices. It's particularly effective over BDIX due to its efficient data transfer protocol and ability to work through NAT.
+                        </p>
+                        
+                        <img src="https://user-images.githubusercontent.com/9379922/164750908-6e2a7fbd-777d-4e8b-870e-3e332e7e2e7e.png" alt="Resilio Sync Interface" class="w-full h-64 object-cover rounded-lg mb-6" referrerpolicy="no-referrer" data-modified="1" data-score="11596.00"/>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Setup and Configuration</h3>
+                        <div class="bento-card mb-6">
+                            <h4 class="font-semibold mb-4">Basic Setup Steps</h4>
+                            <ol class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">1</span>
+                                    <div>
+                                        <strong>Install Resilio Sync</strong>
+                                        <p class="text-sm text-text-secondary">Download and install on both computers from resilio.com</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">2</span>
+                                    <div>
+                                        <strong>Create a Shared Folder</strong>
+                                        <p class="text-sm text-text-secondary">On computer A, add a folder and generate a share link/QR code</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">3</span>
+                                    <div>
+                                        <strong>Connect Computer B</strong>
+                                        <p class="text-sm text-text-secondary">Open the shared link in computer B's Resilio app</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <h4 class="font-semibold mb-3">BDIX Optimization</h4>
+                            <p class="mb-4">
+                                For optimal BDIX performance with Resilio Sync:
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Use port 55555 (default) or another BDIX-friendly port</li>
+                                    <li>Ensure your ISP provides a public IP or disables CGNAT</li>
+                                    <li>Check that your ISP doesn't throttle BDIX traffic</li>
+                                    <li>Enable UPnP on your router for automatic port forwarding</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Performance and Security</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Speed Expectations</h4>
+                                    <p class="text-text-secondary">
+                                        Resilio Sync typically utilizes full local bandwidth on BDIX. With 100Mbps connections, expect ~10-12MB/s transfer speeds once connected. Large 100GB files can transfer in about 2-3 hours.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Security Features</h4>
+                                    <p class="text-text-secondary">
+                                        All transfers are end-to-end encrypted with AES-128. Access is controlled through share links with configurable permissions (read-only or read-write). No central server stores your data.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Syncthing Section -->
+        <section id="syncthing" class="py-16 px-8 lg:px-12 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">Syncthing</h2>
+                
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Overview</h3>
+                        <p class="leading-relaxed mb-6">
+                            Syncthing is an open-source, continuous file synchronization tool that works across platforms. It uses a peer-to-peer protocol to synchronize files between devices without relying on central servers.
+                        </p>
+                        
+                        <img src="https://user-images.githubusercontent.com/9379922/164750908-6e2a7fbd-777d-4e8b-870e-3e332e7e2e7e.png" alt="Syncthing Dashboard" class="w-full h-64 object-cover rounded-lg mb-6" referrerpolicy="no-referrer" data-modified="1" data-score="11596.00"/>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Setup and Configuration</h3>
+                        <div class="bento-card mb-6">
+                            <h4 class="font-semibold mb-4">Basic Setup Steps</h4>
+                            <ol class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">1</span>
+                                    <div>
+                                        <strong>Install Syncthing</strong>
+                                        <p class="text-sm text-text-secondary">Download from syncthing.net and start the service</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">2</span>
+                                    <div>
+                                        <strong>Add Remote Device</strong>
+                                        <p class="text-sm text-text-secondary">In computer A's web GUI, add computer B's device ID</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">3</span>
+                                    <div>
+                                        <strong>Share Folder</strong>
+                                        <p class="text-sm text-text-secondary">Create a shared folder and grant access to the remote device</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <h4 class="font-semibold mb-3">BDIX Optimization</h4>
+                            <p class="mb-4">
+                                To optimize Syncthing for BDIX:
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Forward port 22000 (TCP/UDP) on your router</li>
+                                    <li>Use a public IP address or request a non-CGNAT connection from your ISP</li>
+                                    <li>Manually specify BDIX IP addresses in device settings</li>
+                                    <li>Avoid common BitTorrent ports that might be blocked</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Performance and Security</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Speed Expectations</h4>
+                                    <p class="text-text-secondary">
+                                        Syncthing can saturate your local BDIX connection. With proper configuration, 100Mbps plans can achieve ~10-12MB/s transfer speeds. The low BDIX latency (~10ms) allows for efficient data transfer.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Security Features</h4>
+                                    <p class="text-text-secondary">
+                                        Syncthing uses strong encryption for all transfers. Devices must explicitly approve each other before synchronization begins. No data is stored on third-party servers.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BitTorrent Section -->
+        <section id="torrent" class="py-16 px-8 lg:px-12 bg-soft-grey">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">BitTorrent</h2>
+                
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Overview</h3>
+                        <p class="leading-relaxed mb-6">
+                            BitTorrent is a widely-used protocol for distributing data and electronic files over the internet through peer-to-peer file sharing. With BDIX, BitTorrent traffic remains local, maximizing transfer speeds between participating nodes in Bangladesh.
+                        </p>
+                        
+                        <img src="https://user-images.githubusercontent.com/9379922/164750908-6e2a7fbd-777d-4e8b-870e-3e332e7e2e7e.png" alt="BitTorrent Client Interface" class="w-full h-64 object-cover rounded-lg mb-6" referrerpolicy="no-referrer" data-modified="1" data-score="11596.00"/>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Setup and Configuration</h3>
+                        <div class="bento-card mb-6">
+                            <h4 class="font-semibold mb-4">Basic Setup Steps</h4>
+                            <ol class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">1</span>
+                                    <div>
+                                        <strong>Create Torrent</strong>
+                                        <p class="text-sm text-text-secondary">Use a torrent client (qBittorrent, Transmission) to create a .torrent file for your files</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">2</span>
+                                    <div>
+                                        <strong>Start Seeding</strong>
+                                        <p class="text-sm text-text-secondary">Begin seeding the torrent on computer A</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold">3</span>
+                                    <div>
+                                        <strong>Transfer to Computer B</strong>
+                                        <p class="text-sm text-text-secondary">Send the .torrent file to computer B via email or messaging app</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <h4 class="font-semibold mb-3">BDIX Optimization</h4>
+                            <p class="mb-4">
+                                For optimal BitTorrent performance over BDIX:
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Use a private tracker hosted on BDIX if possible</li>
+                                    <li>Forward the listening port (default: ~6881) on your router</li>
+                                    <li>Disable DHT if using a private tracker to keep traffic local</li>
+                                    <li>Request a public IP from your ISP to ensure direct connections</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Performance and Security</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Speed Expectations</h4>
+                                    <p class="text-text-secondary">
+                                        BitTorrent over BDIX can achieve speeds limited only by your ISP plan. With 100Mbps connections, expect sustained multi-MB/s transfers, allowing 100GB files to transfer in 2-3 hours.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-lock text-purple-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Security Considerations</h4>
+                                    <p class="text-text-secondary">
+                                        BitTorrent exposes your IP address to peers. For enhanced privacy, use a private tracker and avoid public DHT. Encrypt transfers if your client supports protocol encryption.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HTTP/FTP Section -->
+        <section id="http-ftp" class="py-16 px-8 lg:px-12 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">HTTP/FTP Servers</h2>
+                
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Overview</h3>
+                        <p class="leading-relaxed mb-6">
+                            Simple HTTP and FTP servers provide straightforward file sharing solutions. While not as sophisticated as dedicated P2P solutions, they can be effective for one-off transfers or when only one-directional access is needed.
+                        </p>
+                        
+                        <img src="https://user-images.githubusercontent.com/9379922/164750908-6e2a7fbd-777d-4e8b-870e-3e332e7e2e7e.png" alt="FileZilla FTP Server Interface" class="w-full h-64 object-cover rounded-lg mb-6" referrerpolicy="no-referrer" data-modified="1" data-score="11596.00"/>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">HTTP Server Setup</h3>
+                        <div class="bento-card mb-6">
+                            <h4 class="font-semibold mb-4">Python Simple HTTP Server</h4>
+                            <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto"><code># On computer A (file server)
+cd /path/to/files
+python3 -m http.server 8000</code></pre>
+                            <p class="text-sm text-text-secondary mt-2">
+                                On computer B, access the files via: http://&lt;A's_BDIX_IP&gt;:8000/
+                            </p>
+                        </div>
+                        
+                        <div class="bento-card">
+                            <h4 class="font-semibold mb-4">FTP Server Setup with FileZilla</h4>
+                            <ol class="space-y-3 text-sm">
+                                <li>Install FileZilla Server on computer A</li>
+                                <li>Create a user account with access to the shared folder</li>
+                                <li>Forward FTP ports (21 and passive ports) on your router</li>
+                                <li>On computer B, use an FTP client to connect to ftp://&lt;A's_BDIX_IP&gt;</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Performance and Security</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Speed Expectations</h4>
+                                    <p class="text-text-secondary">
+                                        HTTP and FTP transfers over BDIX can achieve speeds comparable to your ISP's upload/download limits. For 100Mbps connections, expect ~10-12MB/s transfers.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Security Considerations</h4>
+                                    <p class="text-text-secondary">
+                                        Basic HTTP/FTP transfers are unencrypted by default. For privacy, use HTTPS or SFTP/FTPS. Avoid exposing these servers to the public internet without proper security measures.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BDIX Benefits Section -->
+        <section id="bdix-benefits" class="py-16 px-8 lg:px-12 bg-soft-grey">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">BDIX Benefits for P2P File Sharing</h2>
+                
+                <div class="highlight-box">
+                    <h3 class="font-serif text-2xl font-semibold mb-4">Why BDIX Matters</h3>
+                    <p class="text-lg leading-relaxed">
+                        BDIX (Bangladesh Internet Exchange) enables local traffic routing between ISPs within Bangladesh. When two users are on BDIX-enabled ISPs, their traffic stays local, eliminating the need to route through international networks. This results in significantly faster, more reliable file transfers.
+                    </p>
+                </div>
+
+                <div class="space-y-8 mt-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">Performance Advantages</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-bolt text-blue-500 mt-1"></i>
+                                    <span>5-10× faster than international transfers</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-chart-line text-blue-500 mt-1"></i>
+                                    <span>Lower latency (~10ms vs ~200ms+ internationally)</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-wifi text-blue-500 mt-1"></i>
+                                    <span>More stable connections with less packet loss</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-tachometer-alt text-blue-500 mt-1"></i>
+                                    <span>Ability to saturate local ISP bandwidth limits</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">Economic and Practical Benefits</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-money-bill-wave text-green-500 mt-1"></i>
+                                    <span>Reduces international bandwidth costs for ISPs</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-globe text-green-500 mt-1"></i>
+                                    <span>Reduces international data dependency</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-plug text-green-500 mt-1"></i>
+                                    <span>Supports local internet infrastructure development</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <i class="fas fa-shield-alt text-green-500 mt-1"></i>
+                                    <span>Less exposure to international network disruptions</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speed Expectations Section -->
+        <section id="speed-expectations" class="py-16 px-8 lg:px-12 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">Speed Expectations on BDIX</h2>
+                
+                <div class="space-y-8">
+                    <div class="highlight-box">
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Performance Factors</h3>
+                        <p class="text-lg leading-relaxed">
+                            Actual BDIX transfer speeds depend on several factors:
+                        </p>
+                        <ul class="space-y-2 text-lg list-disc list-inside ml-8">
+                            <li>Your ISP plan's actual upload/download speeds</li>
+                            <li>Network congestion on your local network</li>
+                            <li>Device storage I/O performance</li>
+                            <li>Proper NAT/port forwarding configuration</li>
+                            <li>BDIX peering quality between ISPs</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Typical Speed Scenarios</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bento-card">
+                                <h4 class="font-semibold mb-3">100Mbps Connection</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li>• Expected download speed: ~10-12MB/s</li>
+                                    <li>• 100MB file: ~10-15 seconds</li>
+                                    <li>• 10GB file: ~15-20 minutes</li>
+                                    <li>• 100GB file: ~2.5-3 hours</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bento-card">
+                                <h4 class="font-semibold mb-3">1Gbps (Fiber) Connection</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li>• Expected download speed: ~100-120MB/s</li>
+                                    <li>• 100MB file: ~1 second</li>
+                                    <li>• 10GB file: ~1.5-2 minutes</li>
+                                    <li>• 100GB file: ~15-20 minutes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="font-serif text-2xl font-semibold mb-4">Speed Comparison</h3>
+                        <div class="mermaid-container">
+                            <div class="mermaid-title">BDIX vs International Transfer Speeds</div>
+                            <div class="mermaid-controls">
+                                <button class="mermaid-btn" onclick="zoomMermaid(this, 1.2)">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="mermaid-btn" onclick="zoomMermaid(this, 0.8)">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="mermaid-btn" onclick="resetMermaid(this)">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                            </div>
+                            <div class="mermaid-wrapper">
+                                <div class="mermaid" id="speed-comparison">
+                                    graph LR
+                                        A[Transfer Method] --> B[BDIX Speed]
+                                        A --> C[International Speed]
+                                        
+                                        B --> D[Resilio Sync: 10-12MB/s]
+                                        B --> E[Syncthing: 10-12MB/s]
+                                        B --> F[BitTorrent: 10-12MB/s]
+                                        B --> G[HTTP/FTP: 10-12MB/s]
+                                        
+                                        C --> H[Resilio Sync: 1-1.5MB/s]
+                                        C --> I[Syncthing: 1-1.5MB/s]
+                                        C --> J[BitTorrent: 1-1.5MB/s]
+                                        C --> K[HTTP/FTP: 1-1.5MB/s]
+                                        
+                                        style A fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+                                        style B fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                                        style C fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="py-16 px-8 lg:px-12 bg-soft-grey">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="font-serif text-4xl font-semibold text-deep-navy mb-8">Summary of Pros & Cons</h2>
+                
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">Resilio Sync</h3>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-green-600">Pros</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>User-friendly GUI</li>
+                                    <li>End-to-end encryption</li>
+                                    <li>Works through NAT with UPnP</li>
+                                    <li>Cross-platform support</li>
+                                    <li>No central file storage</li>
+                                </ul>
+                                
+                                <h4 class="font-semibold text-red-600 mt-4">Cons</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Requires Resilio software on both ends</li>
+                                    <li>Initial link-sharing uses Resilio's servers</li>
+                                    <li>Fallback to relay servers if port forwarding fails</li>
+                                    <li>Free version has limited features</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">Syncthing</h3>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-green-600">Pros</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Open-source and free</li>
+                                    <li>Strong encryption</li>
+                                    <li>No central file storage</li>
+                                    <li>Conflict handling and versioning</li>
+                                    <li>Great for continuous sync</li>
+                                </ul>
+                                
+                                <h4 class="font-semibold text-red-600 mt-4">Cons</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Requires more technical setup</li>
+                                    <li>May need port forwarding</li>
+                                    <li>Uses external relays if direct connect fails</li>
+                                    <li>No built-in GUI for non-technical users</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">BitTorrent</h3>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-green-600">Pros</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Extremely robust and reliable</li>
+                                    <li>Can resume interrupted transfers</li>
+                                    <li>Works for any file size</li>
+                                    <li>Widely supported</li>
+                                    <li>No central server required</li>
+                                </ul>
+                                
+                                <h4 class="font-semibold text-red-600 mt-4">Cons</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Requires torrent creation</li>
+                                    <li>IP addresses are exposed</li>
+                                    <li>May require port forwarding</li>
+                                    <li>Torrents are unencrypted by default</li>
+                                    <li>Public trackers may leak traffic outside BDIX</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bento-card">
+                            <h3 class="font-serif text-xl font-semibold mb-4">HTTP/FTP Servers</h3>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-green-600">Pros</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>Simple setup for one-off transfers</li>
+                                    <li>No special software needed (Python built-in)</li>
+                                    <li>Works in any browser or FTP client</li>
+                                    <li>Can be password protected</li>
+                                </ul>
+                                
+                                <h4 class="font-semibold text-red-600 mt-4">Cons</h4>
+                                <ul class="space-y-2 text-sm list-disc list-inside">
+                                    <li>No resume support for HTTP</li>
+                                    <li>No built-in encryption (unless using HTTPS/SFTP)</li>
+                                    <li>Manual coordination of IP and port</li>
+                                    <li>More complex setup for FTP</li>
+                                    <li>Exposes server to network</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#1e40af',
+                lineColor: '#64748b',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#e2e8f0',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondaryBkg: '#f8fafc',
+                tertiaryBkg: '#e2e8f0'
+            },
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: false
+            },
+            gantt: {
+                useMaxWidth: false
+            }
+        });
+
+        // Mermaid zoom and pan functionality
+        let mermaidScales = new Map();
+
+        function zoomMermaid(button, factor) {
+            const container = button.closest('.mermaid-container');
+            const mermaidDiv = container.querySelector('.mermaid');
+            const diagramId = mermaidDiv.id;
+            
+            let currentScale = mermaidScales.get(diagramId) || 1;
+            let newScale = currentScale * factor;
+            
+            // Limit zoom range
+            newScale = Math.max(0.5, Math.min(3, newScale));
+            
+            mermaidScales.set(diagramId, newScale);
+            mermaidDiv.style.transform = `scale(${newScale})`;
+        }
+
+        function resetMermaid(button) {
+            const container = button.closest('.mermaid-container');
+            const mermaidDiv = container.querySelector('.mermaid');
+            const diagramId = mermaidDiv.id;
+            
+            mermaidScales.set(diagramId, 1);
+            mermaidDiv.style.transform = 'scale(1)';
+            
+            // Reset scroll position
+            const wrapper = container.querySelector('.mermaid-wrapper');
+            wrapper.scrollLeft = 0;
+            wrapper.scrollTop = 0;
+        }
+
+        // Add drag functionality to mermaid diagrams
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidWrappers = document.querySelectorAll('.mermaid-wrapper');
+            
+            mermaidWrappers.forEach(wrapper => {
+                let isDragging = false;
+                let startX, startY, scrollLeft, scrollTop;
+                
+                wrapper.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.pageX - wrapper.offsetLeft;
+                    startY = e.pageY - wrapper.offsetTop;
+                    scrollLeft = wrapper.scrollLeft;
+                    scrollTop = wrapper.scrollTop;
+                    wrapper.style.cursor = 'grabbing';
+                });
+                
+                wrapper.addEventListener('mouseleave', () => {
+                    isDragging = false;
+                    wrapper.style.cursor = 'grab';
+                });
+                
+                wrapper.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    wrapper.style.cursor = 'grab';
+                });
+                
+                wrapper.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    const x = e.pageX - wrapper.offsetLeft;
+                    const y = e.pageY - wrapper.offsetTop;
+                    const walkX = (x - startX) * 2;
+                    const walkY = (y - startY) * 2;
+                    wrapper.scrollLeft = scrollLeft - walkX;
+                    wrapper.scrollTop = scrollTop - walkY;
+                });
+
+                // Wheel zoom support
+                wrapper.addEventListener('wheel', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        const container = wrapper.closest('.mermaid-container');
+                        const zoomBtn = container.querySelector('.mermaid-btn');
+                        const factor = e.deltaY > 0 ? 0.9 : 1.1;
+                        zoomMermaid(zoomBtn, factor);
+                    }
+                });
+            });
+        });
+
+        // Mobile TOC toggle
+        function toggleMobileTOC() {
+            const toc = document.getElementById('toc');
+            toc.classList.toggle('mobile-open');
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active section in TOC
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('#toc a[href^="#"]');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('text-deep-navy', 'font-semibold');
+                link.classList.add('text-text-secondary');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.remove('text-text-secondary');
+                    link.classList.add('text-deep-navy', 'font-semibold');
+                }
+            });
+        });
+
+        // Close mobile TOC when clicking outside
+        document.addEventListener('click', function(event) {
+            const toc = document.getElementById('toc');
+            const hamburgerButton = document.querySelector('button[onclick="toggleMobileTOC()"]');
+            
+            // Check if click is outside TOC and hamburger button
+            if (toc.classList.contains('mobile-open') && 
+                !toc.contains(event.target) && 
+                event.target !== hamburgerButton && 
+                !hamburgerButton.contains(event.target)) {
+                toc.classList.remove('mobile-open');
+            }
+        });
+    </script>
+</body>
+</html>
